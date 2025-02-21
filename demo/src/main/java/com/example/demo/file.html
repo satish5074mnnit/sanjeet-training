@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Client</title>
+    <style>
+        #messages {
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            height: 200px;
+            overflow-y: scroll;
+        }
+        input[type="text"] {
+            width: 80%;
+        }
+        button {
+            width: 15%;
+        }
+    </style>
+</head>
+<body>
+
+<h1>WebSocket Client</h1>
+<div id="messages"></div>
+
+<!-- Input field for typing messages -->
+<input type="text" id="messageInput" placeholder="Enter message">
+<!-- Button to send message -->
+<button id="sendMessageBtn">Send Message</button>
+
+<script>
+    // Replace this with the WebSocket server URL
+    const serverUrl = "ws://localhost:9000/middleware";  // Example WebSocket server
+    const socket = new WebSocket(serverUrl);
+
+    // DOM elements
+    const messageInput = document.getElementById("messageInput");
+    const sendMessageBtn = document.getElementById("sendMessageBtn");
+    const messagesDiv = document.getElementById("messages");
+
+    // Connection opened callback
+    socket.onopen = function(event) {
+        console.log("Connected to WebSocket server");
+        messagesDiv.innerHTML += "<p><strong>Connected to server!</strong></p>";
+    };
+
+    // Message received callback
+    socket.onmessage = function(event) {
+        console.log("Message from server: ", event.data);
+        messagesDiv.innerHTML += `<p>Server: ${event.data}</p>`;
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;  // Scroll to bottom
+    };
+
+    // Error handling callback
+    socket.onerror = function(event) {
+        console.error("WebSocket error: ", event);
+    };
+
+    // Connection closed callback
+    socket.onclose = function(event) {
+        console.log("Disconnected from WebSocket server");
+        messagesDiv.innerHTML += "<p><strong>Disconnected from server.</strong></p>";
+    };
+
+    // Send message to WebSocket server
+    sendMessageBtn.addEventListener("click", function() {
+        const message = messageInput.value.trim();
+        if (message) {
+            // Send message to WebSocket server
+            socket.send(message);
+            console.log("Message sent to server:", message);
+            // Display message in the messages area
+            messagesDiv.innerHTML += `<p>You: ${message}</p>`;
+            messageInput.value = "";  // Clear input field after sending
+        }
+    });
+
+    // Optional: Handle 'Enter' key to send message
+    messageInput.addEventListener("keypress", function(event) {
+        if (event.key === "Enter") {
+            sendMessageBtn.click();
+        }
+    });
+</script>
+
+</body>
+</html>

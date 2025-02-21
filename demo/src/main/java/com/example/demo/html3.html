@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Client with Custom Headers</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        #messages {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            height: 200px;
+            overflow-y: auto;
+        }
+        #status {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+<h1>WebSocket Client with Custom Headers</h1>
+
+<div id="status">Connecting...</div>
+<div id="messages"></div>
+
+<script>
+    // Set up the WebSocket connection with query parameters
+    const authToken = "ya29.c.c0ASRK0GaFnmvrk_MPwRpXgdo2XCgVexJHE2-snX3EABg6TFvKvmd0Wsl04Cyf00KeSCkymuoJVCRBxzNnL0AnnKAYI_HfIEYeC1su5ev5FwJrrf9EYUjXXTqvsFNi2xXDCB_T81XNv19nUCrkWu04YMhZ6FwsgEUR9vWyeHKv4ckHrFuWO9IrriqtmRMgh90ADGlZJDulcS6QkQ2-JkwoAby0n9WDmB7XcW8pskkZdDHeXMPO-l0V0-edmuVrik42XUsWRScB8Tpji2CtKEp7GC6MAkLFX_6-aXcfh8DL_rgohQe2p-lycaM2sKa9tAfBK91X5vHaWpdL8-5upqZoOuaNbCQalo8gNKBc5A56ZhwOLsjKYFjxGSrzE385D_QhcmJ06V2qsY_y6fsgu6BO7ffutoyrShqfa1p14b6glfk886sz21ng9sjmbkyoBoUlmjUeWqgZXyfRdmkjYozUUfmS6lzOmpJn65Bo3XuJ_UXodrgVY4ds_SQf8bv_nuj6q38n6VIazV4-brplk0Uq2YUOZfq7VFpVpZXkgtmQwuehzkjcI8gFrYn46OzxOl_4I-50iuY7IV5IeqrekVRQByqyMays4copFyalcb2nzOWM86ie06B021htJQvpWcucBjvgi8vri0RvtuydWfjn3qoUfpn_l5Vnz_BnJ9j8RU_gZiFf47MZUmschJ5Yogs0WmgMVpXJvXX79cyvSQjvgRsgisBsayQfoQbZyBgYUwqIhha5xo1ReFqBrwe0xIkMZSQpWxVJQQQrXuyX71zeuj8ueOjMu0x-QsSf1kVsBth9_474i1Z093eMMyvJ0oWgs56zRukoy0stjqzOSMpjnl13SMW87QzROh1Sxaita7Qv1hQtFoylg5ebj4WIqdrWhObS9JxFlO5VMMfh4JSxs-qRoSxt3kMS70i0mhz-M8nkR5IZnuuUgnZ8Xa0jkb6XRnfcopb91Zbzbdmibsy8mbOpbrX902yhI200gk0j9ZfizlvBuboijBW";
+   // const userId = "123"; // Replace with user ID
+
+    const socket = new WebSocket(`wss://us-central1-aiplatform.googleapis.com/ws/google.cloud.aiplatform.v1beta1.LlmBidiService/BidiGenerateContent?auth_token=${authToken}`);
+
+    socket.onopen = function() {
+        document.getElementById("status").innerText = "Connected to WebSocket server";
+        console.log("WebSocket connection opened");
+       // socket.send("Hello, server!");  // Send a message to the server
+    };
+
+    socket.onmessage = function(event) {
+        const message = event.data;
+        const messageContainer = document.getElementById("messages");
+        messageContainer.innerHTML += `<p>${message}</p>`;
+        messageContainer.scrollTop = messageContainer.scrollHeight;
+    };
+
+    socket.onclose = function() {
+        document.getElementById("status").innerText = "Disconnected from WebSocket server";
+        console.log("WebSocket connection closed");
+    };
+
+    socket.onerror = function(error) {
+        document.getElementById("status").innerText = "Error with WebSocket connection";
+        console.error("WebSocket error:", error);
+    };
+</script>
+</body>
+</html>
